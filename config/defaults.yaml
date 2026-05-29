@@ -1,0 +1,13 @@
+# Defaults consumed by the splitter, writer, and validation.
+# Override in the Settings page; the app persists changes back here.
+
+peril_rule: mirror_eq          # mirror_eq | separate_ws | blank_ws
+default_currency: JPY          # ISO code; used when per-coverage currency is absent
+sitelim_rule: repeat_whole     # repeat_whole | divide_proportional
+output_line_ending: "\r\n"     # "\r\n" (Windows/RiskLink default) or "\n"
+pruning_threshold: 0.0001      # combinations below this proportion are pruned + redistributed
+output_row_warning: 50000      # warn the analyst before generating if projected rows exceed this
+cede_live_db: false            # if true, CEDE module can attempt a read-only DB connection
+rebase_tolerance: 0.01         # split sums within 1% of 100% are accepted (with rebasing logged)
+recon_tolerance: 0.005         # TIV recon delta tolerance (0.5%) for rounding
+country_default: JP            # used by Japan workflow

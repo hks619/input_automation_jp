@@ -1,0 +1,25 @@
+# Analyst-supplied valid RMS construction codes.
+# Replace this stub with the authoritative list.
+
+schemes:
+  - scheme: RMS
+    class: "100"
+    description: "Wood frame"
+  - scheme: RMS
+    class: "111"
+    description: "Light wood frame"
+  - scheme: RMS
+    class: "200"
+    description: "Masonry"
+  - scheme: RMS
+    class: "300"
+    description: "Reinforced concrete"
+  - scheme: RMS
+    class: "311"
+    description: "RC moment frame"
+  - scheme: RMS
+    class: "400"
+    description: "Steel frame"
+  - scheme: RMS
+    class: "411"
+    description: "Steel moment frame"

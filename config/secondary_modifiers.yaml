@@ -1,0 +1,26 @@
+# Secondary-modifier code lists + default mapping rules.
+# Mapping key (per Section 13 default): (occupancy_type, bldg_class, lobname).
+# When no rule matches, the value is left blank and the audit log records it.
+
+valid_values:
+  ENGFOUND: ["Y", "N", "U"]              # engineered foundation
+  STRUCTUP: ["Y", "N", "U"]              # structural upgrade / retrofit
+  IFMVERTICALEXPDIST: ["U", "L", "M", "H"]  # vertical exposure distribution
+  IFMEQUIPBRACING: ["Y", "N", "U"]       # equipment bracing
+
+# Composite-key rules. Any key field may be "*" (wildcard).
+rules:
+  - occupancy_type: "331"
+    bldg_class: "311"
+    lobname: "*"
+    ENGFOUND: "Y"
+    STRUCTUP: "N"
+    IFMVERTICALEXPDIST: "M"
+    IFMEQUIPBRACING: "N"
+  - occupancy_type: "350"
+    bldg_class: "*"
+    lobname: "*"
+    ENGFOUND: "Y"
+    STRUCTUP: "N"
+    IFMVERTICALEXPDIST: "L"
+    IFMEQUIPBRACING: "Y"

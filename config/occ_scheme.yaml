@@ -1,0 +1,23 @@
+# Analyst-supplied valid RMS occupancy codes.
+# Replace this stub with the authoritative list.
+# Format: list of {scheme, type, description}.
+
+schemes:
+  - scheme: RMS
+    type: "300"
+    description: "Single family dwelling"
+  - scheme: RMS
+    type: "311"
+    description: "Multi-family dwelling"
+  - scheme: RMS
+    type: "320"
+    description: "General commercial"
+  - scheme: RMS
+    type: "331"
+    description: "Office building"
+  - scheme: RMS
+    type: "350"
+    description: "Light industrial"
+  - scheme: RMS
+    type: "351"
+    description: "Heavy industrial"

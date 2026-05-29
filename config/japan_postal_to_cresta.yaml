@@ -1,0 +1,17 @@
+# Japan postal-code prefix → CRESTA zone + prefecture.
+# Analyst-supplied. Stub uses 3-digit prefixes to a small sample of prefectures
+# so the validator and writer have something to resolve against.
+# Replace with the authoritative table.
+
+# Key: first 3 digits of the 7-digit Japan postal code (e.g. "100-0001" → "100").
+lookup:
+  "100": { prefecture: "Tokyo",    cresta: "JP_13" }
+  "101": { prefecture: "Tokyo",    cresta: "JP_13" }
+  "150": { prefecture: "Tokyo",    cresta: "JP_13" }
+  "220": { prefecture: "Kanagawa", cresta: "JP_14" }
+  "231": { prefecture: "Kanagawa", cresta: "JP_14" }
+  "530": { prefecture: "Osaka",    cresta: "JP_27" }
+  "541": { prefecture: "Osaka",    cresta: "JP_27" }
+  "460": { prefecture: "Aichi",    cresta: "JP_23" }
+  "650": { prefecture: "Hyogo",    cresta: "JP_28" }
+  "060": { prefecture: "Hokkaido", cresta: "JP_01" }

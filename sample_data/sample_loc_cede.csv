@@ -1,0 +1,4 @@
+LocID,PortNum,AccGrpID,DedType1,DedAmt1,DedCur1,DedTxt1
+1,1,1,FR,1000000,JPY,
+2,1,1,S,0,JPY,
+3,1,1,FR,500000,JPY,legacy-note
