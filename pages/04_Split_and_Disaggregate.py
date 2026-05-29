@@ -46,6 +46,13 @@ if st.button("▶ Run splitter", type="primary"):
 if st.session_state.get("disagg") is not None:
     disagg = st.session_state.disagg
     report = st.session_state.splitter_report
+    if disagg.empty:
+        st.error(
+            "Splitter produced zero rows. Most common cause: an EXP_EQ LOB has no "
+            "matching rows in one of the split sheets (Occ/Cons/BH/YB). Check that "
+            "every LOB used in EXP_EQ appears in all four split sheets."
+        )
+        st.stop()
     st.success(f"Generated {len(disagg):,} disaggregated records.")
     st.metric("Pruned combinations", report.pruned_combinations)
     st.metric("Pruned share redistributed", f"{report.pruned_share_redistributed:.4f}")

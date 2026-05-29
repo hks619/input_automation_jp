@@ -75,31 +75,42 @@ def build_output_frame(
 
     Pure function — does not write to disk. Caller writes via to_tsv_bytes().
     """
+    # Empty disaggregation → emit an empty frame with the right schema so
+    # downstream code (validation, writer) can still operate.
+    if disagg is None or disagg.empty:
+        return pd.DataFrame({col: pd.Series(dtype=object) for col in OUTPUT_HEADER})
+
     df = disagg.copy()
     out = pd.DataFrame(index=df.index)
 
-    # Identity / geography passthrough.
-    out["ACCNTNUM"] = df.get("ACCNTNUM", "")
-    out["CNTRYSCHEME"] = df.get("CNTRYSCHEME", defaults.get("country_scheme_default", "ISO"))
-    out["POSTALCODE"] = df.get("POSTCODE", "")
-    out["CNTRYCODE"] = df.get("CNTRYCODE", defaults.get("country_default", "JP"))
-    out["STATE"] = df.get("STATE", "")
-    out["COUNTY"] = df.get("COUNTY", "")
-    out["DISTRICT"] = df.get("DISTRICT", "")
+    def col_or(col: str, default):
+        """Return df[col] if present, else a Series of `default` with the right index."""
+        if col in df.columns:
+            return df[col]
+        return pd.Series(default, index=df.index)
 
-    out["NUMBLDGS"] = df.get("NUMBLDGS", 0).astype(int)
+    # Identity / geography passthrough.
+    out["ACCNTNUM"] = col_or("ACCNTNUM", "")
+    out["CNTRYSCHEME"] = col_or("CNTRYSCHEME", defaults.get("country_scheme_default", "ISO"))
+    out["POSTALCODE"] = col_or("POSTCODE", "")
+    out["CNTRYCODE"] = col_or("CNTRYCODE", defaults.get("country_default", "JP"))
+    out["STATE"] = col_or("STATE", "")
+    out["COUNTY"] = col_or("COUNTY", "")
+    out["DISTRICT"] = col_or("DISTRICT", "")
+
+    out["NUMBLDGS"] = col_or("NUMBLDGS", 0).astype(int)
 
     # EQ coverage values: cv1=BLDG, cv2=CONT, cv3=BI.
-    out["EQCV1VAL"] = df.get("BLDG", 0.0)
-    out["EQCV2VAL"] = df.get("CONT", 0.0)
-    out["EQCV3VAL"] = df.get("BI",   0.0)
+    out["EQCV1VAL"] = col_or("BLDG", 0.0)
+    out["EQCV2VAL"] = col_or("CONT", 0.0)
+    out["EQCV3VAL"] = col_or("BI",   0.0)
 
     # SITELIM rule: repeat_whole (default) — value copied per row; divide_proportional
     # (multiply by combo_proportion).
     if defaults.get("sitelim_rule", "repeat_whole") == "divide_proportional":
-        out["EQSITELIM"] = df.get("SITELIM", 0.0) * df.get("combo_proportion", 1.0)
+        out["EQSITELIM"] = col_or("SITELIM", 0.0) * col_or("combo_proportion", 1.0)
     else:
-        out["EQSITELIM"] = df.get("SITELIM", 0.0)
+        out["EQSITELIM"] = col_or("SITELIM", 0.0)
 
     # WS coverage values per peril_rule.
     peril_rule = defaults.get("peril_rule", "mirror_eq")
@@ -117,25 +128,25 @@ def build_output_frame(
         # Caller must have merged WS columns into df before calling.
         for src, dst in (("WS_BLDG", "WSCV1VAL"), ("WS_CONT", "WSCV2VAL"),
                          ("WS_BI", "WSCV3VAL"), ("WS_SITELIM", "WSSITELIM")):
-            out[dst] = df.get(src, 0.0)
+            out[dst] = col_or(src, 0.0)
     else:
         raise ValueError(f"Unknown peril_rule: {peril_rule}")
 
     # Currencies — single per portfolio by default.
-    cur = df.get("CURRENCY", defaults.get("default_currency", "JPY"))
+    cur = col_or("CURRENCY", defaults.get("default_currency", "JPY"))
     for c in EQ_CUR_COLS + WS_CUR_COLS:
         out[c] = cur
 
     # Occupancy / construction / storeys / year built.
-    out["OCCSCHEME"] = df.get("OCCSCHEME", "")
-    out["OCCTYPE"]   = df.get("OCCTYPE", "")
-    out["BLDGSCHEME"] = df.get("BLDGSCHEME", "")
-    out["BLDGCLASS"]  = df.get("BLDGCLASS", "")
-    out["NUMSTORIES"] = df.get("NUMSTORIES", "")
-    out["YEARBUILT"]  = df.get("YEARBUILT", "")
+    out["OCCSCHEME"] = col_or("OCCSCHEME", "")
+    out["OCCTYPE"]   = col_or("OCCTYPE", "")
+    out["BLDGSCHEME"] = col_or("BLDGSCHEME", "")
+    out["BLDGCLASS"]  = col_or("BLDGCLASS", "")
+    out["NUMSTORIES"] = col_or("NUMSTORIES", "")
+    out["YEARBUILT"]  = col_or("YEARBUILT", "")
 
     # Secondary modifiers — need LOBNAME for the matcher, so attach it temporarily.
-    out["LOBNAME"] = df.get("LOBNAME", "")
+    out["LOBNAME"] = col_or("LOBNAME", "")
     out = _apply_secondary_modifiers(out, secondary_rules)
     out = out.drop(columns=["LOBNAME"])
 
